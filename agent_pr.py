@@ -1,4 +1,4 @@
-from github import Github
+from github import Github, Auth
 import os, datetime, sys
 
 REPO_NAME = "ChefBones323/LocalAIChatApp-"
@@ -8,7 +8,8 @@ if not TOKEN:
     sys.exit("❌ Missing GITHUB_TOKEN environment variable. Please add it in Replit Secrets.")
 
 print("🔑 Authenticating with GitHub...")
-g = Github(TOKEN)
+auth = Auth.Token(TOKEN)
+g = Github(auth=auth)
 repo = g.get_repo(REPO_NAME)
 
 branch_name = f"chatgpt-update-{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
