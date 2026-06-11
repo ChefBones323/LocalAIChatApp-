@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "hermes:contracts:queue-ready-job-draft-request:v1.0",
+  "type": "object",
+  "title": "Queue-Ready Job Draft Request",
+  "description": "Validates a metadata-only request to draft a future queue-ready job for an existing content package without approval or execution.",
+  "required": [
+    "job_title",
+    "job_lane",
+    "requested_model",
+    "payload",
+    "execution_parameters"
+  ],
+  "properties": {
+    "job_title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 180
+    },
+    "job_lane": {
+      "type": "string",
+      "const": "local_llm_content_generation"
+    },
+    "requested_model": {
+      "type": "string",
+      "const": "llama3.1"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Flexible user-provided draft payload. Execution-relevant content is hash-sealed after canonicalization.",
+      "required": [
+        "user_prompt"
+      ],
+      "properties": {
+        "system_prompt": {
+          "type": "string",
+          "maxLength": 12000
+        },
+        "user_prompt": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 24000
+        },
+        "content_context": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "execution_parameters": {
+      "type": "object",
+      "description": "Locked local LLM parameters for the metadata-only future job draft.",
+      "required": [
+        "model_name",
+        "temperature",
+        "top_p",
+        "max_tokens"
+      ],
+      "properties": {
+        "model_name": {
+          "type": "string",
+          "const": "llama3.1"
+        },
+        "temperature": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 0.8,
+          "default": 0.4
+        },
+        "top_p": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 1.0,
+          "default": 0.9
+        },
+        "max_tokens": {
+          "type": "integer",
+          "minimum": 128,
+          "maximum": 4096,
+          "default": 2048
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
