@@ -1,0 +1,265 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "hermes:contracts:queue-ready-job-draft-record:v1.0",
+  "type": "object",
+  "title": "Queue-Ready Job Draft Record",
+  "description": "Durable metadata-only record for a future queue-ready job draft. This artifact does not approve, queue, dispatch, or execute the job.",
+  "required": [
+    "job_draft_id",
+    "project_id",
+    "package_id",
+    "schema_version",
+    "contract_version",
+    "active_phase",
+    "status",
+    "job_title",
+    "job_lane",
+    "requested_model",
+    "payload",
+    "execution_parameters",
+    "hash_binding",
+    "created_at",
+    "expires_at",
+    "governance",
+    "lineage"
+  ],
+  "properties": {
+    "job_draft_id": {
+      "type": "string",
+      "pattern": "^job_draft_[0-9]{14}_[a-z0-9]{6,12}$"
+    },
+    "project_id": {
+      "type": "string",
+      "pattern": "^creator_project_[0-9]{14}_[a-z0-9]{6,12}$"
+    },
+    "package_id": {
+      "type": "string",
+      "pattern": "^content_package_[0-9]{14}_[a-z0-9]{6,12}$"
+    },
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "contract_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "active_phase": {
+      "type": "string",
+      "const": "Queue-Ready Job Draft"
+    },
+    "status": {
+      "type": "string",
+      "const": "draft_saved_without_execution"
+    },
+    "job_title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 180
+    },
+    "job_lane": {
+      "type": "string",
+      "const": "local_llm_content_generation"
+    },
+    "requested_model": {
+      "type": "string",
+      "const": "llama3.1"
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "user_prompt"
+      ],
+      "properties": {
+        "system_prompt": {
+          "type": "string",
+          "maxLength": 12000
+        },
+        "user_prompt": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 24000
+        },
+        "content_context": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "execution_parameters": {
+      "type": "object",
+      "required": [
+        "model_name",
+        "temperature",
+        "top_p",
+        "max_tokens"
+      ],
+      "properties": {
+        "model_name": {
+          "type": "string",
+          "const": "llama3.1"
+        },
+        "temperature": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 0.8
+        },
+        "top_p": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 1.0
+        },
+        "max_tokens": {
+          "type": "integer",
+          "minimum": 128,
+          "maximum": 4096
+        }
+      },
+      "additionalProperties": false
+    },
+    "hash_binding": {
+      "type": "object",
+      "required": [
+        "hash_algorithm",
+        "canonicalization",
+        "hash_scope",
+        "payload_hash"
+      ],
+      "properties": {
+        "hash_algorithm": {
+          "type": "string",
+          "const": "sha256"
+        },
+        "canonicalization": {
+          "type": "string",
+          "const": "json_sorted_keys_no_whitespace_v1"
+        },
+        "hash_scope": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "job_lane",
+              "requested_model",
+              "payload",
+              "execution_parameters"
+            ]
+          },
+          "minItems": 4,
+          "maxItems": 4,
+          "uniqueItems": true
+        },
+        "payload_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "governance": {
+      "type": "object",
+      "required": [
+        "execution_allowed",
+        "queue_mutation_allowed",
+        "scheduler_dispatch_allowed",
+        "worker_dispatch_allowed",
+        "model_inference_allowed",
+        "media_generation_allowed",
+        "gpu_reservation_allowed",
+        "qdrant_write_allowed",
+        "automatic_retry_allowed",
+        "approval_required_for_execution"
+      ],
+      "properties": {
+        "execution_allowed": {
+          "type": "boolean",
+          "const": false
+        },
+        "queue_mutation_allowed": {
+          "type": "boolean",
+          "const": false
+        },
+        "scheduler_dispatch_allowed": {
+          "type": "boolean",
+          "const": false
+        },
+        "worker_dispatch_allowed": {
+          "type": "boolean",
+          "const": false
+        },
+        "model_inference_allowed": {
+          "type": "boolean",
+          "const": false
+        },
+        "media_generation_allowed": {
+          "type": "boolean",
+          "const": false
+        },
+        "gpu_reservation_allowed": {
+          "type": "boolean",
+          "const": false
+        },
+        "qdrant_write_allowed": {
+          "type": "boolean",
+          "const": false
+        },
+        "automatic_retry_allowed": {
+          "type": "boolean",
+          "const": false
+        },
+        "approval_required_for_execution": {
+          "type": "boolean",
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "lineage": {
+      "type": "object",
+      "required": [
+        "requirements_source",
+        "active_phase",
+        "parent_project_id",
+        "parent_package_id",
+        "parent_package_record_path",
+        "next_allowed_step"
+      ],
+      "properties": {
+        "requirements_source": {
+          "type": "string",
+          "const": "REQUIREMENTS/HERMES_TRUE_SOURCE_REQUIREMENTS.md"
+        },
+        "active_phase": {
+          "type": "string",
+          "const": "Queue-Ready Job Draft"
+        },
+        "parent_project_id": {
+          "type": "string",
+          "pattern": "^creator_project_[0-9]{14}_[a-z0-9]{6,12}$"
+        },
+        "parent_package_id": {
+          "type": "string",
+          "pattern": "^content_package_[0-9]{14}_[a-z0-9]{6,12}$"
+        },
+        "parent_package_record_path": {
+          "type": "string"
+        },
+        "next_allowed_step": {
+          "type": "string",
+          "const": "Operator Approval Gate"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
